@@ -1,0 +1,93 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class screen {
+
+public:
+
+	typedef string::size_type index;
+
+	friend index area(screen&);
+	//friend screen change_area();
+	friend class window_mgr;
+	
+	screen(index high, index wide, char c) :height(high), width(wide), contents(high*wide, c) {}
+
+	const char show(index r, index c) const{
+		
+		return contents[r * height + c];
+	}
+	 
+	screen& move(index r, index c)
+	 {
+		 cursor = r * height + c;
+		 return *this;
+	 }
+
+	screen& set(index r, index c, char t)
+	{
+		cursor = r * height + c;
+		contents[cursor] = t;
+		return *this;
+	}
+
+	const string show() const{
+		return this->contents;
+	}
+
+	
+	
+private:
+	index height;
+	index width;
+	index cursor;
+	string contents;
+
+};
+
+class window_mgr {
+
+public:
+
+	void relocate(int r, int c, screen &s)
+	{
+		s.height = s.height + r;
+		s.width = s.width + c;
+	}
+
+};
+
+
+screen::index area(screen &screen)
+{
+	return screen.height*screen.width;
+
+}
+
+//screen change_area()
+//{
+//
+//}
+//
+
+
+int main()
+{
+	screen myscreen(10, 10, 'A');
+	cout << myscreen.show(5,4) << endl;
+
+	myscreen.move(2, 3);	//移动光标位置
+	cout << myscreen.show(2,3) << endl;
+	//myscreen.set(2, 3, 'C');
+	cout << myscreen.set(2, 3, 'C').show(2, 3) << endl;
+	cout << myscreen.show() << endl;
+	cout << area(myscreen) << endl;
+
+	window_mgr m;
+	m.relocate(7, 8, myscreen); // 如何调整屏幕的 高度 和 宽度
+	cout << area(myscreen) << endl; //友元的声明和定义
+
+	return 0;
+}
